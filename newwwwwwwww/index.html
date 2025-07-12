@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday 🎉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .container {
+      height: 100%;
+      width: 100%;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      transition: background 1s ease;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 1.3rem;
+      max-width: 80%;
+      margin-bottom: 20px;
+    }
+
+    img {
+      width: 250px;
+      height: 250px;
+      border-radius: 15px;
+      object-fit: cover;
+      margin-bottom: 20px;
+      border: 5px solid #fff;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3);
+      opacity: 0;
+      animation: fadeIn 1s ease-in-out forwards;
+    }
+
+    button {
+      padding: 12px 30px;
+      font-size: 1rem;
+      background: #fff;
+      color: #111;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: #eee;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background Music -->
+<audio id="bgMusic" src="birthday.mp3" autoplay loop></audio>
+
+<!-- Confetti Canvas -->
+<canvas id="confettiCanvas"></canvas>
+
+<div class="container" id="themeContainer">
+  <h1>Happy Birthday JYO💖</h1>
+  <p>To someone incredibly special... Here's a little digital surprise 🌟</p>
+  <button onclick="nextTheme()">🎁 Start the Magic</button>
+</div>
+
+<script>
+  const themes = [
+    {
+      bg: "linear-gradient(to right, #ff9966, #ff5e62)",
+      title: "🎈 The Beginning",
+      message: "From this moment, everything became better because of you.",
+      image: "photo1.jpg"
+    },
+    {
+      bg: "linear-gradient(to right, #56ccf2, #2f80ed)",
+      title: "🌄 Our Adventures",
+      message: "Every trip, every moment, is unforgettable with you.",
+      image: "photo2.jpg"
+    },
+    {
+      bg: "linear-gradient(to right, #43cea2, #185a9d)",
+      title: "😂 Crazy Memories",
+      message: "Remember this one? We laughed till our stomachs hurt!",
+      image: "photo3.jpg"
+    },
+    {
+      bg: "linear-gradient(to right, #f7971e, #ffd200)",
+      title: "💫 Your Smile",
+      message: "Your smile lights up every dark room. Keep shining.",
+      image: "photo4.jpg"
+    },
+    {
+      bg: "linear-gradient(to right, #c31432, #240b36)",
+      title: "❤️ You Matter",
+      message: "You are cherished, celebrated, and truly loved.",
+      image: "photo5.jpg"
+    },
+    {
+      bg: "linear-gradient(to right, #1d4350, #a43931)",
+      title: "🎉 Cheers to You!",
+      message: "Here’s to more memories, laughs, and joy. Happy Birthday JYO❤️!",
+      image: "photo6.jpg"
+    }
+  ];
+
+  let index = 0;
+
+  function nextTheme() {
+    const c = document.getElementById('themeContainer');
+
+    if (index < themes.length) {
+      const t = themes[index];
+      c.style.background = t.bg;
+      c.innerHTML = `
+        <h1>${t.title}</h1>
+        <img src="${t.image}" alt="memory" />
+        <p>${t.message}</p>
+        <button onclick="nextTheme()">👉 Next Surprise</button>
+      `;
+      shootConfetti();
+      index++;
+    } else {
+      c.style.background = "linear-gradient(to right, #0f2027, #203a43, #2c5364)";
+      c.innerHTML = `
+        <h1>🌟 That's All for Now!</h1>
+        <p>Thank you for being part of this journey. Wishing you endless love & joy. 🎂</p>
+        <button onclick="location.reload()">🔁 Watch Again</button>
+      `;
+      shootConfetti();
+    }
+  }
+
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  let W = window.innerWidth;
+  let H = window.innerHeight;
+  canvas.width = W;
+  canvas.height = H;
+
+  const confetti = [];
+
+  function shootConfetti() {
+    for (let i = 0; i < 150; i++) {
+      confetti.push({
+        x: Math.random() * W,
+        y: Math.random() * H - H,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 10 + 5,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        tilt: Math.random() * 10 - 10
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (let i = 0; i < confetti.length; i++) {
+      let c = confetti[i];
+      ctx.beginPath();
+      ctx.fillStyle = c.color;
+      ctx.moveTo(c.x + c.tilt, c.y);
+      ctx.lineTo(c.x + c.tilt + c.r, c.y + c.r);
+      ctx.lineTo(c.x + c.tilt - c.r, c.y + c.r);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    update();
+    requestAnimationFrame(draw);
+  }
+
+  function update() {
+    for (let i = 0; i < confetti.length; i++) {
+      let c = confetti[i];
+      c.y += c.d / 2;
+      if (c.y > H) {
+        confetti.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
+  draw();
+
+  window.addEventListener('resize', () => {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+  });
+</script>
+
+</body>
+</html>
